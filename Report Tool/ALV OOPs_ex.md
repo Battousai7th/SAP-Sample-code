@@ -1,4 +1,5 @@
 ## Insert/Delete/Copy row
+
 ```abap
 *&---------------------------------------------------------------------*
 *& ZUS_SDN_ALVGRID_EDITABLE_8A
@@ -340,3 +341,134 @@ ls_outtab-kunnr = ld_value1.
 append ls_outtab to gt_outtab.
 endform.                    " INSERT_ROW
 ```  
+
+
+## Handle Toolbar (Add Button)
+For adding a button on the toolbar, you will need to handle the **TOOLBAR** event of the class **CL_GUI_ALV_GRID**. 
+ + This event has a parameter E_OBJECT which is an object reference to the class **CL_ALV_EVENT_TOOLBAR_SET**. 
+ + Using this object you can access an internal table **MT_BUTTON** in the class **CL_ALV_EVENT_TOOLBAR_SET**. 
+ + Append the Function Code, Icon and Text to this internal table.
+
+```abap
+*&---------------------------------------------------------------------*
+*& TOP
+*&---------------------------------------------------------------------*
+DATA: go_container TYPE REF TO cl_gui_custom_container, "Container
+         go_grid        TYPE REF TO cl_gui_alv_grid. "Grid
+
+*&---------------------------------------------------------------------*
+*& CLASS
+*&---------------------------------------------------------------------*
+CLASS gcl_event_handler DEFINITION.
+  PUBLIC SECTION.
+    METHODS: handle_toolbar
+      FOR EVENT toolbar OF cl_gui_alv_grid
+      IMPORTING e_object e_interactive.
+
+    METHODS: handle_user_command
+      FOR EVENT user_command OF cl_gui_alv_grid
+      IMPORTING e_ucomm.
+ENDCLASS. "lcl_event_handler DEFINITION
+
+CLASS gcl_event_handler IMPLEMENTATION.
+
+  METHOD: handle_toolbar.
+    PERFORM handle_toolbar USING e_object.
+  ENDMETHOD.
+
+  METHOD: handle_user_command.
+    PERFORM handle_user_command USING e_ucomm.
+  ENDMETHOD.
+
+ENDCLASS. "lcl_event_handler IMPLEMENTATION
+*&---------------------------------------------------------------------*
+*& Declare Instance after create CLASS
+*&---------------------------------------------------------------------*
+DATA: go_event_handler TYPE REF TO gcl_event_handler.
+
+*&---------------------------------------------------------------------*
+*& Module STATUS_9000 OUTPUT
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+MODULE status_9000 OUTPUT.
+
+  IF go_grid IS INITIAL.
+    SET PF-STATUS 'ZSTATUS_9000'. "GUI Status
+    SET TITLEBAR 'ZTITLE_9000'.   "Title
+* Creating Docking Container and grid
+    PERFORM create_object.
+* Filling the fieldcatalog table
+    PERFORM build_fieldcat.
+* Registering edit
+    PERFORM register_edit.
+* Displaying the output
+    PERFORM display_output.
+
+    CREATE OBJECT go_event_handler .
+    SET HANDLER go_event_handler->handle_toolbar FOR go_grid.
+    SET HANDLER go_event_handler->handle_user_command FOR go_grid.
+
+    CALL METHOD go_grid->set_ready_for_input  " go_grid->set_ready_for_input( i_ready_for_input = 1 ).
+      EXPORTING
+        i_ready_for_input = 1.
+  ELSE.
+    CALL METHOD go_grid->refresh_table_display
+      EXCEPTIONS
+        finished = 1
+        OTHERS   = 2.
+  ENDIF.
+ENDMODULE.
+*&---------------------------------------------------------------------*
+*& Form HANDLE_TOOLBAR
+*&---------------------------------------------------------------------*
+* text
+*----------------------------------------------------------------------*
+* -->P_E_OBJECT text
+*----------------------------------------------------------------------*
+FORM handle_toolbar USING i_object TYPE REF TO cl_alv_event_toolbar_set.
+  DATA: ls_toolbar TYPE stb_button.
+
+  CLEAR ls_toolbar.
+  MOVE 'CHECK' TO ls_toolbar-function.
+  MOVE icon_okay TO ls_toolbar-icon.
+  MOVE 'Check' TO ls_toolbar-text.
+  MOVE 'Check' TO ls_toolbar-quickinfo.
+  MOVE ' ' TO ls_toolbar-disabled.
+  APPEND ls_toolbar TO i_object->mt_toolbar.
+
+ENDFORM. " HANDLE_TOOLBAR
+*&---------------------------------------------------------------------*
+*& Form HANDLE_USER_COMMAND
+*&---------------------------------------------------------------------*
+* text
+*----------------------------------------------------------------------*
+* -->P_E_UCOMM text
+*----------------------------------------------------------------------*
+FORM handle_user_command USING i_ucomm TYPE syucomm.
+
+  DATA:lt_rows TYPE lvc_t_row,
+       w_row   TYPE lvc_s_row.
+
+*GET selected row
+    CALL METHOD grid1->get_selected_rows
+      IMPORTING
+        et_index_rows = lt_rows.
+
+    READ TABLE lt_rows INTO w_row INDEX 1.
+    READ TABLE i_vbak INTO w_vbak INDEX w_row-index.
+
+  CASE i_ucomm.
+    WHEN 'CHECK'.
+      MESSAGE i000(zf) WITH 'Check Button!'.
+    WHEN OTHERS.
+  ENDCASE.
+
+    CALL METHOD o_alvgrid->refresh_table_display
+      EXPORTING
+        is_stable = ls_stable.
+
+    CALL METHOD cl_gui_cfw=>flush.
+
+ENDFORM. " HANDLE_USER_COMMAND
+```
