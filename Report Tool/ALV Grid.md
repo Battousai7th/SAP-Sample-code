@@ -1,4 +1,4 @@
-### ALV Grid
+# ALV Grid
 ```abap
 *&---------------------------------------------------------------------*
 *& Form DISPLAY_DATA
@@ -85,7 +85,7 @@ FORM SET_PF_STATUS USING RT_EXTAB TYPE SLIS_T_EXTAB.
 ENDFORM.
 ```
 
-### Brief Code
+## Brief Code
 ```abap
 DATA: GT_FIELDCAT TYPE          LVC_T_FCAT,
       GS_FIELDCAT TYPE          LVC_S_FCAT,
@@ -230,7 +230,7 @@ FORM f_display.
 ENDFORM. 
 ```
 
-### HTML Top of page
+## HTML Top of page
 ```abap
 *&---------------------------------------------------------------------*
 *& Form HTML_TOP_OF_PAGE
@@ -428,6 +428,8 @@ ENDFORM.
 ```
 
 ## Color
+![image](https://github.com/user-attachments/assets/732f9c74-107f-4a47-b028-a44a0779c023)
+
 ```abap
   DATA: LS_CELLTAB TYPE LVC_S_STYL,
         LT_CELLTAB TYPE LVC_T_STYL,
@@ -452,3 +454,46 @@ FORM BUILD_LAYOUT .
   gs_layout-ctab_fname = 'CELL_COLOR'.
 ENDFORM.            "BUILD_LAYOUT
 ```
+- **Lưu ý**: Không thể dùng cùng với `AT LAST, AT END, ...`
+[alvgrid_cellcolor](https://www.trailsap.com/dev/abap/reporting/alv/?topic=alvgrid_cellcolor)
+
+- **Another Example**
+```abap
+DATA: gs_color    TYPE lvc_s_scol.
+
+  LOOP AT lt_file_tmp INTO ls_file.
+    gs_color-fname = 'TYPE'.       "Tên cột cần tô
+    IF ls_file-type <> 'E'.        
+      gs_color-color-col = '5'.  "Xanh
+      gs_color-color-int = '0'.
+      gs_color-color-inv = '0'.
+      APPEND gs_color TO ls_file-color.
+      CLEAR gs_color.
+    ELSE.
+      gs_color-color-col = '6'.   "Đỏ
+      gs_color-color-int = '0'.
+      gs_color-color-inv = '0'.
+      APPEND gs_color TO ls_file-color.
+      CLEAR gs_color.
+    ENDIF.
+
+    APPEND ls_file TO lt_file.
+    CLEAR ls_file.
+  ENDLOOP.
+```
+
+- Đối với **REUSE_ALV_GRID_DISPLAY**
+```abap
+    DATA: gt_fieldcat TYPE slis_t_fieldcat_alv,
+          gs_fieldcat TYPE slis_fieldcat_alv.
+
+    CLEAR gs_fieldcat.
+    gs_fieldcat-fieldname  = 'MESS_DESC'.
+    gs_fieldcat-seltext_m  = TEXT-006.
+    gs_fieldcat-emphasize  = 'C500'.
+    APPEND gs_fieldcat TO gt_fieldcat.
+```
+
+- **Bảng màu theo dòng**
+
+![image](https://github.com/user-attachments/assets/9d117331-20b8-41f7-aec2-c10c30c839c2)
