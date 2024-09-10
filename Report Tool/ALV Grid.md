@@ -85,6 +85,7 @@ FORM SET_PF_STATUS USING RT_EXTAB TYPE SLIS_T_EXTAB.
 ENDFORM.
 ```
 
+
 ## Brief Code
 ```abap
 DATA: GT_FIELDCAT TYPE          LVC_T_FCAT,
@@ -229,6 +230,7 @@ FORM f_display.
 
 ENDFORM. 
 ```
+
 
 ## HTML Top of page
 ```abap
@@ -426,3 +428,85 @@ FORM TOP_OF_PAGE.
       IT_LIST_COMMENTARY = LT_HEADER.
 ENDFORM.  
 ```
+
+
+## Handle & GUI Status
+```abap
+FORM SET_PF_STATUS USING RT_EXTAB TYPE SLIS_T_EXTAB.
+  SET PF-STATUS 'ZSTANDARD_FULLSCREEN'.
+ENDFORM.
+
+FORM SET_PF_STATUS USING RT_EXTAB TYPE SLIS_T_EXTAB.
+  SET PF-STATUS 'STANDARD' OF PROGRAM 'SAPLKKBL'.
+ENDFORM. 
+
+FORM set_pf_status USING rt_extab TYPE slis_t_extab.
+  APPEND '&ETA' TO rt_extab.
+  SET PF-STATUS 'STANDARD_FULLSCREEN' EXCLUDING rt_extab.
+ENDFORM.
+
+
+*&---------------------------------------------------------------------*
+*& Form HANDLE_USER_COMMAND
+*&---------------------------------------------------------------------*
+*& text
+*&---------------------------------------------------------------------*
+*& -->  p1        text
+*& <--  p2        text
+*&---------------------------------------------------------------------*
+FORM HANDLE_USER_COMMAND USING R_UCOMM     LIKE SY-UCOMM
+                               RS_SELFIELD TYPE SLIS_SELFIELD.
+  DATA: LW_MES           TYPE STRING,
+        REF1             TYPE REF TO CL_GUI_ALV_GRID,
+        I_FILTER_ENTRIES TYPE LVC_T_FIDX.
+
+  CALL FUNCTION 'GET_GLOBALS_FROM_SLVC_FULLSCR'
+    IMPORTING
+      E_GRID = REF1.
+  BREAK ABAPLEADER.
+  CALL METHOD REF1->CHECK_CHANGED_DATA.
+  CASE R_UCOMM.
+    WHEN '&CHE'.  "Select all
+      LOOP AT GT_DATA ASSIGNING FIELD-SYMBOL(<FS_DATA>).
+        <FS_DATA>-CHECK = 'X'.
+      ENDLOOP.
+      (MODIFY GT_ALV FROM VALUE GTY_CORE_PR( CHECK = 'X' ) TRANSPORTING ('CHECK') WHERE (`CHECK <> 'X'`).) 
+    WHEN '&UNC'.  "Unselect all
+      LOOP AT GT_DATA ASSIGNING <FS_DATA> WHERE CHECK = 'X'.
+        <FS_DATA>-CHECK = ''.
+      ENDLOOP.
+      (MODIFY GT_ALV FROM VALUE GTY_CORE_PR( CHECK = '' ) TRANSPORTING ('CHECK') WHERE (`CHECK <> ''`).)
+    WHEN '&IC1'. " Double Click Event
+      DATA(LT_TEMP) = GT_DATA[].
+      READ TABLE GT_DATA ASSIGNING <FS_DATA> INDEX RS_SELFIELD-TABINDEX.
+      IF SY-SUBRC = 0.
+        DELETE LT_TEMP WHERE VBELN <> <FS_DATA>-VBELN.
+      ENDIF.
+
+        CASE rs_selfield-fieldname.
+          WHEN 'AKTNR'.
+            SET PARAMETER ID 'WAK' FIELD ls_output-aktnr.
+            CALL TRANSACTION 'WAK3' AND SKIP FIRST SCREEN.
+          WHEN 'FILGR'.
+          WHEN OTHERS.
+            " Nothing to do
+        ENDCASE.
+
+    WHEN '&PRT'.
+      ""
+    WHEN OTHERS.
+	 ""
+    ENDCASE.
+
+    rs_selfield-refresh = 'X'. "Hiển thị checkbox khi check all 
+ENDFORM. 
+
+    WHEN '&IC1'.
+      BREAK ABAPLEADER.
+      IF LINE_EXISTS( GT_ALV[ RS_SELFIELD-TABINDEX ] ).
+        DATA(LW_RS) = GT_ALV[ RS_SELFIELD-TABINDEX ].
+      ENDIF.
+```
+
+**Using the standard menu buttons (PF STATUS)**
+- [standard-menu-buttons-pf-status](https://medium.com/@acarahmet/using-the-standard-menu-buttons-pf-status-4ddb485addb4)
