@@ -221,3 +221,81 @@
   ENDLOOP.
 ```
 
+
+## FM output to internal table
+```abap
+&---------------------------------------------------------------------
+*& Form load_file
+&---------------------------------------------------------------------
+FORM load_file USING p_file LIKE rlgrap-filename
+            CHANGING pt_excel LIKE gt_exl.
+  DATA: lw_data           TYPE truxs_t_text_data,
+        lw_path           TYPE string,
+        lw_string         TYPE char15,
+        lt_alsmex_tabline TYPE TABLE OF alsmex_tabline.
+
+  " Open file
+  CALL FUNCTION 'SAPGUI_PROGRESS_INDICATOR'
+    EXPORTING
+      percentage = 35
+      text       = 'Uploading Data'.
+
+  lw_path = p_file.
+  CALL FUNCTION 'GUI_UPLOAD'
+    EXPORTING
+      filename                = lw_path
+      filetype                = 'ASC'
+      has_field_separator     = 'X'
+    TABLES
+      data_tab                = lw_data
+    EXCEPTIONS
+      file_open_error         = 1
+      file_read_error         = 2
+      no_batch                = 3
+      gui_refuse_filetransfer = 4
+      invalid_type            = 5
+      no_authority            = 6
+      unknown_error           = 7
+      bad_data_format         = 8
+      header_not_allowed      = 9
+      separator_not_allowed   = 10
+      header_too_long         = 11
+      unknown_dp_error        = 12
+      access_denied           = 13
+      dp_out_of_memory        = 14
+      disk_full               = 15
+      dp_timeout              = 16
+      OTHERS                  = 17.
+  IF sy-subrc <> 0.
+* Implement suitable error handling here
+  ENDIF.
+
+  CALL FUNCTION 'TEXT_CONVERT_XLS_TO_SAP'
+    EXPORTING
+      i_field_seperator    = 'X'
+*     I_LINE_HEADER        =
+      i_tab_raw_data       = lw_data
+      i_filename           = p_file
+    TABLES
+      i_tab_converted_data = pt_excel
+    EXCEPTIONS
+      conversion_failed    = 1
+      OTHERS               = 2.
+  IF sy-subrc <> 0.
+* Implement suitable error handling here
+  ENDIF.
+
+  CHECK pt_excel[] IS NOT INITIAL.
+  DELETE pt_excel[] INDEX 1.
+
+  " End file
+  CALL FUNCTION 'SAPGUI_PROGRESS_INDICATOR'
+    EXPORTING
+      percentage = 100
+      text       = 'Upload Completed'.
+  IF pt_excel IS INITIAL.
+    MESSAGE s000.
+    STOP.
+  ENDIF.
+ENDFORM.
+```
