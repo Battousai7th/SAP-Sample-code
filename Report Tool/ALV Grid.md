@@ -1,4 +1,4 @@
-## ALV Grid
+### ALV Grid
 ```abap
 *&---------------------------------------------------------------------*
 *& Form DISPLAY_DATA
@@ -228,4 +228,227 @@ FORM f_display.
   ENDIF.
 
 ENDFORM. 
+```
+
+### HTML Top of page
+```abap
+*&---------------------------------------------------------------------*
+*& Form HTML_TOP_OF_PAGE
+*&---------------------------------------------------------------------*
+FORM HTML_TOP_OF_PAGE USING TOP TYPE REF TO CL_DD_DOCUMENT.
+  DATA: L_TEXT(255) TYPE           C,
+        L_GRID      TYPE REF TO    CL_GUI_ALV_GRID,
+        F(14)       TYPE           C VALUE 'SET_ROW_HEIGHT',
+        LW_NAME     TYPE           SDYDO_TEXT_ELEMENT,
+        LW_ADDRESS  TYPE           SDYDO_TEXT_ELEMENT,
+        LW_TAX      TYPE           SDYDO_TEXT_ELEMENT,
+        LW_TITLE    TYPE           SDYDO_TEXT_ELEMENT,
+        LW_TITLE_EN TYPE           SDYDO_TEXT_ELEMENT,
+        LW_TK       TYPE           SDYDO_TEXT_ELEMENT,
+        LW_DATE     TYPE           SDYDO_TEXT_ELEMENT.
+
+  "Company Name
+  LW_NAME = GS_PARAMETER-NAME.
+  CONCATENATE LW_NAME
+              GS_PARAMETER-NAME_COOP
+         INTO LW_NAME SEPARATED BY SPACE.
+  CALL METHOD TOP->ADD_TEXT
+    EXPORTING
+      TEXT         = LW_NAME
+      SAP_EMPHASIS = 'Strong'.
+
+  "Company Address
+  LW_ADDRESS = GS_PARAMETER-ADDRESS.
+  CONCATENATE LW_ADDRESS
+              GS_PARAMETER-WEBSITE
+         INTO LW_ADDRESS SEPARATED BY SPACE.
+  CALL METHOD TOP->NEW_LINE.
+  CALL METHOD TOP->ADD_TEXT
+    EXPORTING
+      TEXT = LW_ADDRESS.
+
+  "VAT reg. no
+  LW_TAX = GS_PARAMETER-TAX.
+  CALL METHOD TOP->NEW_LINE.
+  CALL METHOD TOP->ADD_TEXT
+    EXPORTING
+      TEXT = LW_TAX.
+
+  "Vietnamese title
+  LW_TITLE = GC_TEXT03.
+  CALL METHOD TOP->NEW_LINE.
+  CALL METHOD TOP->ADD_GAP
+    EXPORTING
+      WIDTH = 90.
+  CALL METHOD TOP->ADD_TEXT
+    EXPORTING
+      TEXT      = LW_TITLE
+      SAP_STYLE = 'HEADING'.
+
+  CALL METHOD TOP->NEW_LINE.
+  LW_DATE = GS_PARAMETER-PARAMETER01.
+  CALL METHOD TOP->NEW_LINE.
+  CALL METHOD TOP->ADD_GAP
+    EXPORTING
+      WIDTH = 110.
+  CALL METHOD TOP->ADD_TEXT
+    EXPORTING
+      TEXT         = LW_DATE
+      SAP_EMPHASIS = 'emphasis'.
+ENDFORM. 
+```
+
+**I_CALLBACK_HTML_TOP_OF_PAGE = 'TOP_OF_PAGE_HTML'**
+
+```abap
+*&---------------------------------------------------------------------*
+*& Form HTML_TOP_OF_PAGE
+*&---------------------------------------------------------------------*
+FORM HTML_TOP_OF_PAGE USING TOP TYPE REF TO CL_DD_DOCUMENT.
+  DATA : LW_STRING TYPE STRING,
+         LW_POSIT  TYPE SY-TABIX.
+  TRY.
+      GS_DATA = GT_DATA[ 1 ].
+      GS_PARAMETER-PARAMETER01 = GS_DATA-NAME_COMP.
+      GS_PARAMETER-PARAMETER02 = GS_DATA-ADDRESS_VN.
+      GS_PARAMETER-PARAMETER03 = GS_DATA-ADDRESS_EN.
+      GS_PARAMETER-PARAMETER04 = GS_DATA-TEL_MST.
+      GS_PARAMETER-PARAMETER05 = GS_DATA-FROM_TO_BUDAT.
+      GS_PARAMETER-PARAMETER06 = GS_DATA-TK_ACCT.
+    CATCH CX_SY_ITAB_LINE_NOT_FOUND.
+  ENDTRY.
+
+  "Company Name
+  CALL METHOD TOP->ADD_TEXT
+    EXPORTING
+      TEXT         = GS_PARAMETER-PARAMETER01
+      SAP_EMPHASIS = 'Strong'.
+
+  "Company Address VN
+  CALL METHOD TOP->NEW_LINE.
+  CALL METHOD TOP->ADD_TEXT
+    EXPORTING
+      TEXT         = GS_PARAMETER-PARAMETER02
+      SAP_EMPHASIS = 'NORMAL'.
+
+  "Company Address EN
+  CLEAR LW_STRING.
+  LW_STRING = |<div style=''text-align:left; ''><i> { GS_PARAMETER-PARAMETER03 } </i></div>|.
+  SEARCH TOP->HTML_TABLE FOR TOP->CURSOR.
+  IF SY-SUBRC EQ 0.
+    LW_POSIT = SY-TABIX.
+    CALL METHOD TOP->HTML_INSERT
+      EXPORTING
+        CONTENTS = LW_STRING
+      CHANGING
+        POSITION = LW_POSIT.
+  ENDIF.
+
+  "Tell/MST
+  CALL METHOD TOP->ADD_TEXT
+    EXPORTING
+      TEXT         = GS_PARAMETER-PARAMETER04
+      SAP_EMPHASIS = 'NORMAL'.
+
+  "Title Report VN
+  CLEAR: LW_STRING.
+  LW_STRING = |<div style="text-align:center; font-size:20;" ''><b> { GS_PARAMETER-TITLE_REPORT } </b></div>|.
+  SEARCH TOP->HTML_TABLE FOR TOP->CURSOR." CHUYEN CHUYOI HTML -> SAP
+  IF SY-SUBRC EQ 0.
+    LW_POSIT = SY-TABIX.
+    CALL METHOD TOP->HTML_INSERT
+      EXPORTING
+        CONTENTS = LW_STRING
+      CHANGING
+        POSITION = LW_POSIT.
+  ENDIF.
+
+  "From/To Date
+  CLEAR: LW_STRING.
+  LW_STRING = |<div style="text-align:center; font-size:12;" ''><i> { GS_PARAMETER-PARAMETER05 } </i></div>|.
+  SEARCH TOP->HTML_TABLE FOR TOP->CURSOR." CHUYEN CHUYOI HTML -> SAP
+  IF SY-SUBRC EQ 0.
+    LW_POSIT = SY-TABIX.
+    CALL METHOD TOP->HTML_INSERT
+      EXPORTING
+        CONTENTS = LW_STRING
+      CHANGING
+        POSITION = LW_POSIT.
+  ENDIF.
+
+  "Tài khoản
+  CLEAR: LW_STRING.
+  LW_STRING = |<div style="text-align:center; font-size:12;" ''><n> { GS_PARAMETER-PARAMETER06 } </n></div>|.
+  SEARCH TOP->HTML_TABLE FOR TOP->CURSOR." CHUYEN CHUYOI HTML -> SAP
+  IF SY-SUBRC EQ 0.
+    LW_POSIT = SY-TABIX.
+    CALL METHOD TOP->HTML_INSERT
+      EXPORTING
+        CONTENTS = LW_STRING
+      CHANGING
+        POSITION = LW_POSIT.
+  ENDIF. 
+
+  DATA: L_GRID TYPE REF TO CL_GUI_ALV_GRID,
+        f(14)  TYPE C VALUE 'SET_ROW_HEIGHT'.
+
+*set height of this section
+  CALL FUNCTION 'GET_GLOBALS_FROM_SLVC_FULLSCR'
+    IMPORTING
+      E_GRID = L_GRID.
+  CALL METHOD L_GRID->PARENT->PARENT->(F)
+    EXPORTING
+      ID     = 1
+      HEIGHT = 20.
+ENDFORM. 
+
+*ALV khai bao trong TOP
+DATA: GT_FIELDCAT TYPE          LVC_T_FCAT,
+      GS_FIELDCAT TYPE          LVC_S_FCAT,
+      GS_LAYOUT   TYPE          LVC_S_LAYO. 
+*ALV 
+"TOP_OF_PAGE 
+
+FORM TOP_OF_PAGE.
+  DATA: LT_HEADER TYPE SLIS_T_LISTHEADER,
+        LS_HEADER TYPE SLIS_LISTHEADER,
+        LV_BEGDA  TYPE CHAR10,
+        LV_ENDDA  TYPE CHAR10.
+  WRITE PN-BEGDA TO LV_BEGDA DD/MM/YYYY.
+  WRITE PN-ENDDA TO LV_ENDDA DD/MM/YYYY.
+  LS_HEADER-TYP  = 'H'.
+  LS_HEADER-KEY  = 'TK DS thu moi nhan viec'.
+  CONCATENATE TEXT-001 LV_BEGDA TEXT-002 LV_ENDDA INTO LS_HEADER-INFO SEPARATED BY SPACE.
+  APPEND LS_HEADER TO LT_HEADER.
+
+  CALL FUNCTION 'REUSE_ALV_COMMENTARY_WRITE'
+    EXPORTING
+      IT_LIST_COMMENTARY = LT_HEADER.
+ENDFORM.  
+```
+
+## Color
+```abap
+  DATA: LS_CELLTAB TYPE LVC_S_STYL,
+        LT_CELLTAB TYPE LVC_T_STYL,
+        LS_CELLCOLOR  TYPE LVC_S_SCOL,
+        LT_CELLCOLOR TYPE LVC_T_SCOL. 
+
+    ls_style-fieldname  = 'SO_TIEN'.
+    ls_style-style      = '00000121'.
+    INSERT ls_style INTO TABLE lt_style.
+    ls_cellcolor-color-col = '6'.  "color code 1-7, if outside rage defaults to 7 (Theo dãi màu từ 1 -> 7, 3 là màu vàng, 7 là màu da)
+    ls_cellcolor-color-int = '0'.  "text colour
+    ls_cellcolor-color-inv = '1'.  "background colour
+    ls_cellcolor-fname     = 'SO_TIEN'.
+    INSERT ls_cellcolor INTO TABLE lt_cellcolor.
+    gs_data_group-cell_style = lt_style.
+    gs_data_group-cell_color = lt_cellcolor. 
+
+FORM BUILD_LAYOUT .
+  gs_layout-cwidth_opt = 'X'.
+  gs_layout-zebra      = 'X'.
+  gs_layout-stylefname = 'CELL_STYLE'.
+  gs_layout-ctab_fname = 'CELL_COLOR'.
+ENDFORM.            "BUILD_LAYOUT
 ```
