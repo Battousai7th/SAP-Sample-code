@@ -75,6 +75,7 @@ DATA: gs_color    TYPE lvc_s_scol.
 ![image](https://github.com/user-attachments/assets/ce86f510-556a-49cd-8a0e-201419473783)
 
 
+
 ## Double Click vào Cell chỉ định theo line
 ```abap
 *&---------------------------------------------------------------------*
@@ -111,6 +112,7 @@ FORM F_DOUBLE_CLICK_CELL USING RS_SELFIELD  TYPE SLIS_SELFIELD.
   ENDIF.
 ```
 
+
 ## Refresh ALV GRID and keep position and current cell
 [refresh-alv-grid-and-keep-position-and-current-cell](https://abapblog.com/articles/tricks/22-refresh-alv-grid-and-keep-position-and-current-cell)
 
@@ -138,4 +140,53 @@ DATA: d_repid    LIKE sy-repid,
           is_stable      = ls_stable
           i_soft_refresh = 'X'.
 *     End of refresh ALV
+```
+
+
+## Sort dynamic Table
+```
+DATA otab TYPE ABAP_SORTORDER_TAB.
+SORT <fs_tab> BY (otab).            
+Table ABAP_SORTORDER_TAB has fields 
+NAME                                
+DESCENDING                          
+ASTEXT
+```
+   **Example:**
+```abap
+  DATA lt_otab TYPE abap_sortorder_tab .
+  lt_otab = VALUE #( ( name = 'ID'
+                       descending = ''
+                       astext = '' ) ).
+  SORT <ft_dyntable> BY (lt_otab).
+```
+
+
+## Check Selection
+```abap
+  DATA: lt_fieldcat TYPE lvc_t_fcat,
+        ls_fieldcat LIKE LINE OF lt_fieldcat,
+        ls_layout   TYPE lvc_s_layo.
+*--------------------------------------------------------------------*
+*  Create fieldcalogy
+  DEFINE add_field.
+    CLEAR ls_fieldcat.
+    ls_fieldcat-fieldname = &1.
+    ls_fieldcat-checkbox  = &2.
+    ls_fieldcat-edit      = &3.
+    ls_fieldcat-seltext   = &4.
+    ls_fieldcat-reptext   = &4.
+    ls_fieldcat-coltext   = &4.
+    ls_fieldcat-no_zero   = 'X'.
+    APPEND ls_fieldcat TO lt_fieldcat.
+  END-OF-DEFINITION.
+*--------------------------------------------------------------------*
+  add_field  'SEL'    'X'  'X'  'Selection'.
+*--------------------------------------------------------------------*
+  ls_layout-box_fname  = 'SEL'.
+  ls_layout-cwidth_opt = 'X'.
+  ls_layout-zebra      = 'X'.
+  ls_layout-sel_mode   = 'X'.
+  ls_layout-edit_mode  = 'X'.
+  ls_layout-NO_ROWMARK = 'X'.
 ```
