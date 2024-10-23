@@ -12,13 +12,12 @@ define view entity ZI_RAP_SO_I_PTM
       quantity              as Quantity,
       quantity_unit         as QuantityUnit,
       @EndUserText.label: 'Unit Price'
-      @Semantics.amount.currencyCode : 'Currency'
+      @Semantics.amount.currencyCode : 'CurrencyCode'
       price                 as Price,
-      _SalesOrder.Currency,
+      currency_code         as CurrencyCode,
       draft_uuid            as DraftUuid,
-      create_date           as CreatedDate,
-      create_time           as CreatedTime,
-      create_by             as CreatedBy,
+      created_at            as CreatedAt,
+      created_by            as CreatedBy,
       last_changed_at       as LastChangedAt,
       last_changed_by       as LastChangedBy,
       local_last_changed_at as LocalLastChangedAt,

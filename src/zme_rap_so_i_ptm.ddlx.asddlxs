@@ -77,6 +77,16 @@ annotate view ZC_RAP_SO_I_PTM with
                      position: 10 }]
         }
   Quantity;
+  
+  @Consumption.valueHelpDefinition: [{
+        entity: {
+            name: 'I_UnitOfMeasure',
+            element: 'UnitOfMeasure'
+        },
+        useForValidation: true,
+        label: 'Select UoM from Dailog'
+    }]
+  QuantityUnit;
 
   @UI: {
       lineItem: [{ position: 100 }],
@@ -85,14 +95,21 @@ annotate view ZC_RAP_SO_I_PTM with
         }
   Price;
 
+  @Consumption.valueHelpDefinition: [{
+        entity: {
+            name: 'I_Currency',
+            element: 'Currency'
+        },
+        useForValidation: true,
+        label: 'Select currency from Dailog'
+    }]
+  CurrencyCode;
+
+  @UI.hidden: true
+  CreatedAt;
+
   @UI.hidden: true
   CreatedBy;
-
-  @UI.hidden: true
-  CreatedDate;
-
-  @UI.hidden: true
-  CreatedTime;
 
   @UI.hidden: true
   LastChangedBy;

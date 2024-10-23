@@ -11,7 +11,7 @@ define root view entity ZR_RAP_SO_PTM
       note                  as Note,
       sold_to_party         as SoldToParty,
       not_available         as NotAvailable,
-      currency_code         as Currency,
+      currency              as Currency,
       tax_amount            as TaxAmount,
       lifecycle_status      as LifecycleStatus,
       billing_status        as BillingStatus,
@@ -21,12 +21,11 @@ define root view entity ZR_RAP_SO_PTM
         when 'B' then 2 -- 'Partially processed'    |  2: yellow colour
         when 'C' then 3 -- 'Completelly processed'  |  3: green colour
                  else 0 -- 'Not Relevant'           |  0: unknown
-      end                   as DeliveryStatusCriticality, //Color of DeliveryStatus field
+      end                   as DeliveryStatusCriticality,           //Color of DeliveryStatus field
       payment_method        as PaymentMethod,
       payment_term          as PaymentTerm,
-      create_date           as CreatedDate,
-      create_time           as CreatedTime,
-      create_by             as CreatedBy,
+      created_at            as CreatedAt,
+      created_by            as CreatedBy,
       last_changed_at       as LastChangedAt,
       last_changed_by       as LastChangedBy,
       local_last_changed_at as LocalLastChangedAt,

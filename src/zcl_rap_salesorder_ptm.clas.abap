@@ -50,12 +50,11 @@ CLASS zcl_rap_salesorder_ptm IMPLEMENTATION.
         lfstk,                "Delivery status
         pay_method,
         cmpsd,
-        erdat,
-        erzet,
-        ernam,
-        upd_tmstmp,
-        last_changed_by_user
-        FROM vbak
+        created_at,
+        created_by,
+        changed_at,
+        changed_by
+        FROM zdb_vbak_main
         ORDER BY ssid
         INTO TABLE @DATA(lt_vbak).
 
@@ -74,11 +73,10 @@ CLASS zcl_rap_salesorder_ptm IMPLEMENTATION.
                                                     deliverystatus  = ls_vbak-lfstk
                                                     paymentmethod   = ls_vbak-pay_method
                                                     paymentterm     = ls_vbak-cmpsd
-                                                    createddate     = ls_vbak-erdat
-                                                    createdtime     = ls_vbak-erzet
-                                                    createdby       = ls_vbak-ernam
-                                                    lastchangedat   = ls_vbak-upd_tmstmp
-                                                    lastchangedby   = ls_vbak-last_changed_by_user
+                                                    CreatedAt       = ls_vbak-created_at
+                                                    CreatedBy       = ls_vbak-created_by
+                                                    lastchangedat   = ls_vbak-changed_at
+                                                    lastchangedby   = ls_vbak-changed_by
                                                     %control =  VALUE #(  salesorder      = if_abap_behv=>mk-on
                                                                           orderdate       = if_abap_behv=>mk-on
                                                                           note            = if_abap_behv=>mk-on
@@ -90,8 +88,7 @@ CLASS zcl_rap_salesorder_ptm IMPLEMENTATION.
                                                                           deliverystatus  = if_abap_behv=>mk-on
                                                                           paymentmethod   = if_abap_behv=>mk-on
                                                                           paymentterm     = if_abap_behv=>mk-on
-                                                                          createddate     = if_abap_behv=>mk-on
-                                                                          createdtime     = if_abap_behv=>mk-on
+                                                                          CreatedAt       = if_abap_behv=>mk-on
                                                                           createdby       = if_abap_behv=>mk-on
                                                                           lastchangedat   = if_abap_behv=>mk-on
                                                                           lastchangedby   = if_abap_behv=>mk-on  ) ) ).
@@ -108,10 +105,11 @@ CLASS zcl_rap_salesorder_ptm IMPLEMENTATION.
         vrkme,
         netpr,
         waerk,
-        erdat,
-        erzet,
-        ernam
-        FROM vbap
+        created_at,
+        created_by,
+        changed_at,
+        changed_by
+        FROM zdb_vbap_main
         ORDER BY ssid
         INTO TABLE @DATA(lt_vbap).
 
@@ -125,20 +123,22 @@ CLASS zcl_rap_salesorder_ptm IMPLEMENTATION.
                                                     quantity      = ls_vbap-kwmeng
                                                     quantityunit  = ls_vbap-vrkme
                                                     price         = ls_vbap-netpr
-                                                    currency      = ls_vbap-waerk
-                                                    createddate   = ls_vbap-erdat
-                                                    createdtime   = ls_vbap-erzet
-                                                    createdby     = ls_vbap-ernam
+                                                    CurrencyCode  = ls_vbap-waerk
+                                                    CreatedAt     = ls_vbap-created_at
+                                                    CreatedBy     = ls_vbap-created_by
+                                                    LastChangedAt = ls_vbap-changed_at
+                                                    LastChangedBy = ls_vbap-changed_by
                                                     %control =  VALUE #(  itemline      = if_abap_behv=>mk-on
                                                                           itemnote      = if_abap_behv=>mk-on
                                                                           product       = if_abap_behv=>mk-on
                                                                           quantity      = if_abap_behv=>mk-on
                                                                           quantityunit  = if_abap_behv=>mk-on
                                                                           price         = if_abap_behv=>mk-on
-                                                                          currency      = if_abap_behv=>mk-on
-                                                                          createddate   = if_abap_behv=>mk-on
-                                                                          createdtime   = if_abap_behv=>mk-on
-                                                                          createdby     = if_abap_behv=>mk-on  ) ) ).
+                                                                          CurrencyCode  = if_abap_behv=>mk-on
+                                                                          CreatedAt     = if_abap_behv=>mk-on
+                                                                          CreatedBy     = if_abap_behv=>mk-on
+                                                                          LastChangedAt = if_abap_behv=>mk-on
+                                                                          LastChangedBy = if_abap_behv=>mk-on ) ) ).
 
       LOOP AT lt_vbak INTO DATA(ls_vbak1).
         DATA(lt_temp) = lt_target[].
@@ -168,6 +168,11 @@ CLASS zcl_rap_salesorder_ptm IMPLEMENTATION.
             REPORTED DATA(ls_reported2).
       ENDIF.
     ENDIF.
+
+    o->write(
+      EXPORTING
+        data   = 'Import data successfully!'
+        ).
 
   ENDMETHOD.
 ENDCLASS.

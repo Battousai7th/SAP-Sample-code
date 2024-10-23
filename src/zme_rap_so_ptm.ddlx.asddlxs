@@ -93,6 +93,14 @@ annotate view ZCR_RAP_SO_PTM with
       fieldGroup: [{ qualifier: 'basicInfo',
                      position: 40 }]
         }
+  @Consumption.valueHelpDefinition: [{
+        entity: {
+            name: 'I_Currency',
+            element: 'Currency'
+        },
+        useForValidation: true,
+        label: 'Select currency from Dailog'
+    }]
   Currency;
 
   @UI: {
@@ -157,10 +165,23 @@ annotate view ZCR_RAP_SO_PTM with
         }
   TaxAmount;
 
+  @UI.hidden: true
+  CreatedAt;
+
+  @UI.hidden: true
+  CreatedBy;
+
+  @UI.hidden: true
+  LastChangedBy;
+
+  @UI.hidden: true
+  LastChangedAt;
+
   @UI: {
       lineItem: [{ position: 110 }],
       fieldGroup: [{ qualifier: 'ActionInfo',
                      position: 10 }]
         }
   NotAvailable;
+
 }

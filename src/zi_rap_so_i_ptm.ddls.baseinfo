@@ -3,7 +3,6 @@
 {
 "FROM":
 [
-"ZR_RAP_SO_PTM",
 "ZDB_RAP_SO_I_PTM"
 ],
 "ASSOCIATED":
@@ -13,6 +12,8 @@
 "BASE":
 [],
 "ANNO_REF":
+[],
+"SCALAR_FUNCTION":
 [],
 "VERSION":0,
 "ANNOREF_EVALUATION_ERROR":""

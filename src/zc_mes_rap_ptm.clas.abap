@@ -13,7 +13,7 @@ CLASS zc_mes_rap_ptm DEFINITION
     METHODS constructor
       IMPORTING im_textid    TYPE scx_t100key OPTIONAL
                 im_serverity TYPE if_abap_behv_message=>t_severity OPTIONAL
-                im_fieldname TYPE char30 OPTIONAL.
+                im_fieldname TYPE char72 OPTIONAL.
 
     CONSTANTS:
       BEGIN OF c_notavailable_s,
@@ -52,7 +52,7 @@ CLASS zc_mes_rap_ptm DEFINITION
         attr4 TYPE scx_attrname VALUE '',
       END OF c_setadmitted_s.
 
-    DATA: !fieldname TYPE char30.
+    DATA: !fieldname TYPE char72.
 
   PROTECTED SECTION.
   PRIVATE SECTION.

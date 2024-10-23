@@ -3,6 +3,7 @@
 @Metadata.allowExtensions: true
 @ObjectModel.semanticKey: ['SalesOrder'] //Bold Key
 define root view entity ZCR_RAP_SO_PTM
+  provider contract transactional_query
   as projection on ZR_RAP_SO_PTM
 {
       @EndUserText.label: 'Sales Order'
@@ -15,7 +16,7 @@ define root view entity ZCR_RAP_SO_PTM
       SoldToParty,
       @EndUserText.label: 'Not Available'
       NotAvailable,
-      @EndUserText.label: 'Currency Code'
+      @EndUserText.label: 'Currency'
       Currency,
       @EndUserText.label: 'Tax Amout'
       @Semantics.amount.currencyCode : 'Currency'
@@ -26,15 +27,13 @@ define root view entity ZCR_RAP_SO_PTM
       BillingStatus,
       @EndUserText.label: 'Delivery Status'
       DeliveryStatus,
-      DeliveryStatusCriticality, //Color of DeliveryStatus field
+      DeliveryStatusCriticality,                    //Color of DeliveryStatus field
       @EndUserText.label: 'Payment Method'
       PaymentMethod,
       @EndUserText.label: 'Payment Term'
       PaymentTerm,
-      @Semantics.systemDate.createdAt: true
-      CreatedDate,
-      @Semantics.systemTime.createdAt: true
-      CreatedTime,
+      @Semantics.systemDateTime.createdAt: true
+      CreatedAt,
       @Semantics.user.createdBy: true
       CreatedBy,
       @Semantics.systemDateTime.lastChangedAt: true

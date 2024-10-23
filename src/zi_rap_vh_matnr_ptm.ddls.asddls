@@ -7,7 +7,8 @@
     sizeCategory: #S,
     dataClass: #MIXED
 }
-define view entity ZI_RAP_VH_MATNR_PTM as select from mara
+/*+[hideWarning] { "IDS" : [ "CARDINALITY_CHECK" ]  } */
+define view entity ZI_RAP_VH_MATNR_PTM as select from zdb_matnr_f4
   association [0..1] to ZI_RAP_SO_I_PTM as _SalesOrderItems 
   on $projection.Matnr = _SalesOrderItems.Product
 {
@@ -18,6 +19,6 @@ define view entity ZI_RAP_VH_MATNR_PTM as select from mara
     _SalesOrderItems.Quantity,
     @EndUserText.label: 'Quantity Unit'
     _SalesOrderItems.QuantityUnit,
-    @Semantics.amount.currencyCode : '_SalesOrderItems.Currency'
+    @Semantics.amount.currencyCode : '_SalesOrderItems.CurrencyCode'
     _SalesOrderItems
 }

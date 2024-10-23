@@ -19,8 +19,7 @@ early numbering                                                                 
   SoldToParty;
 
   field ( mandatory )
-  OrderDate,
-  Currency;                                                                             // Show signal '*'
+  OrderDate;                                                                            // Show signal '*'
 
   field ( features : instance ) TaxAmount;                                              // Field Control
   create;
@@ -35,11 +34,12 @@ early numbering                                                                 
   { create; field
     OrderDate,
     TaxAmount,
-    Currency; }                                                                         // Validation for fields
+    Currency;
+  }                                                                                     // Validation for fields
 
   determination set_value_soldtoparty on modify { create; }                             // Determination for fields, automaticaly generate when using Draft
 
-  draft action Activate;                                                                // Activate function for Draft
+  draft action Activate optimized;                                                      // Activate function for Draft
   draft action Discard;
   draft action Edit;
   draft action Resume;
@@ -55,16 +55,15 @@ early numbering                                                                 
     Note = note;
     SoldToParty = sold_to_party;
     NotAvailable = not_available;
-    Currency = currency_code;
+    Currency = currency;
     TaxAmount = tax_amount;
     LifecycleStatus = lifecycle_status;
     BillingStatus = billing_status;
     DeliveryStatus = delivery_status;
     PaymentMethod = payment_method;
     PaymentTerm = payment_term;
-    CreatedDate = create_date;
-    CreatedTime = create_time;
-    CreatedBy = create_by;
+    CreatedAt = created_at;
+    CreatedBy = created_by;
     LastChangedAt = last_changed_at;
     LastChangedBy = last_changed_by;
     LocalLastChangedAt = local_last_changed_at;
@@ -112,10 +111,10 @@ etag master LocalLastChangedAt
     Quantity = quantity;
     QuantityUnit = quantity_unit;
     Price = price;
+    CurrencyCode = currency_code;
     DraftUuid = draft_uuid;
-    CreatedDate = create_date;
-    CreatedTime = create_time;
-    CreatedBy = create_by;
+    CreatedAt = created_at;
+    CreatedBy = created_by;
     LastChangedAt = last_changed_at;
     LastChangedBy = last_changed_by;
     LocalLastChangedAt = local_last_changed_at;

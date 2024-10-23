@@ -1,5 +1,5 @@
 @AbapCatalog.viewEnhancementCategory: [#NONE]
-@AccessControl.authorizationCheck: #CHECK
+@AccessControl.authorizationCheck: #NOT_REQUIRED
 @EndUserText.label: 'Value Help RAP for Delivery Status'
 @Metadata.ignorePropagatedAnnotations: true
 @ObjectModel.usageType:{
@@ -8,8 +8,9 @@
     dataClass: #MIXED
 }
 @Search.searchable: true
+/*+[hideWarning] { "IDS" : [ "KEY_CHECK" ]  } */
 define view entity ZI_RAP_VH_STATV_PTM
-  as select from dd07t
+  as select from zdb_dd07t_f4
 {
       @Search.defaultSearchElement: true
       @Search.ranking: #HIGH
@@ -24,6 +25,4 @@ define view entity ZI_RAP_VH_STATV_PTM
       domvalue_l as Value
 }
 where
-      dd07t.domname    = 'STATV'
-  and dd07t.ddlanguage = abap.lang'E'
-  and dd07t.as4local   = 'A'
+      zdb_dd07t_f4.ddlanguage = abap.lang'E'
