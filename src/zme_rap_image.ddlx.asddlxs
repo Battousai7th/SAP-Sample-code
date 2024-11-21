@@ -1,0 +1,37 @@
+@Metadata.layer: #CORE
+@UI.headerInfo: {
+    typeName: 'Image',
+    typeNamePlural: 'Images',
+    imageUrl: 'Attachment'
+}
+annotate view ZC_RAP_IMAGE with
+{
+  @UI: { facet: [{
+         type: #IDENTIFICATION_REFERENCE,
+         purpose: #STANDARD,
+         position: 10,
+         label: 'User',
+         id:'user' }]
+        }
+  @UI: {
+        lineItem: [{ position: 10, label: 'Image Id' }],
+        identification: [{ position: 10, label: 'Image Id' }]
+       }
+  ImageId;
+  
+  @UI.identification: [{ position: 20, label: 'Book Id' }]
+  TravelId;
+  
+  @UI: {
+        lineItem: [{ position: 30, label: 'Image' }],
+        identification: [{ position:30, label: 'Image' }]
+       }
+  Attachment;
+  
+  @UI.hidden: true
+  MimeType;
+
+  @UI.hidden: true
+  FileName;
+
+}

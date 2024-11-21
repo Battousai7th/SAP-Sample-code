@@ -1,0 +1,191 @@
+@Metadata.layer: #CUSTOMER
+//@Search.searchable: true                          //Apply Value help
+@UI.headerInfo: {
+    typeName: 'Travel Information',                 //Label Object Page
+    typeNamePlural: 'Travels',                       //Label List Report and count Items
+    title: { 
+             label: 'Travel List',                     //Label App
+             value: 'TravelId'           
+           },
+    description.value: '_Customer.LastName'
+//    imageUrl: ''
+}
+annotate view ZC_RAP_TRAVEL with
+{
+  @UI.facet: [{ 
+                    purpose: #HEADER, 
+                    type: #DATAPOINT_REFERENCE, 
+                    label: 'Flight Ticket Price',
+                    position: 10,
+                    targetQualifier: 'QLF_price_data' 
+              },        
+              { 
+                    purpose: #HEADER, 
+                    type: #DATAPOINT_REFERENCE, 
+                    label: 'Status',
+                    position: 20,
+                    targetQualifier: 'QLF_status' 
+              },
+              { 
+                    purpose: #STANDARD, 
+                    type: #COLLECTION, 
+                    position: 10,
+                    id: 'ID_Supper',
+                    label: 'Additional Details' 
+              },
+              { 
+                    purpose: #STANDARD, 
+                    type: #IDENTIFICATION_REFERENCE, 
+                    label: 'More Infor',
+                    position: 10,
+                    parentId: 'ID_Supper' 
+              },
+              { 
+                    purpose: #STANDARD, 
+                    type: #FIELDGROUP_REFERENCE, 
+                    label: 'Price Data',
+                    position: 20,
+                    parentId: 'ID_Supper',
+                    targetQualifier: 'QLF_Pricing'
+              },
+              { 
+                    purpose: #STANDARD, 
+                    type: #FIELDGROUP_REFERENCE, 
+                    label: 'Dates',
+                    position: 30,
+                    parentId: 'ID_Supper',
+                    targetQualifier: 'QLF_Dates'
+              },
+{ 
+                    purpose: #STANDARD, 
+                    type: #LINEITEM_REFERENCE, 
+                    label: 'Booking',
+                    position: 20,
+                    targetElement: '_BookingChild'
+              }]
+                 
+  @UI.lineItem: [{ position: 10 }]
+  @UI.selectionField: [{ position: 10 }]
+  @UI.identification: [{ position: 10 }]
+  @Consumption.valueHelpDefinition: [{ 
+                                        entity : { 
+                                                    name: '/DMO/I_Agency',
+                                                    element:'AgencyID' 
+                                                 } 
+                                    }]
+  TravelId;
+
+  @UI.lineItem: [{ position: 20 }]
+  @UI.selectionField: [{ position: 20 }]
+  @UI.identification: [{ position: 20 }]
+  @Consumption.valueHelpDefinition: [{ 
+                                        entity : { 
+                                                    name: '/DMO/I_Agency_StdVH',
+                                                    element:'AgencyID' 
+                                                 } 
+                                    }]
+  AgencyId;
+
+  @UI.lineItem: [{ position: 30 }]
+  @UI.selectionField: [{ position: 30 }]
+  @UI.identification: [{ position: 30 }]
+  @Consumption.valueHelpDefinition: [{ 
+                                        entity : { 
+                                                    name: '/DMO/I_Customer',
+                                                    element:'CustomerID' 
+                                                 } 
+                                    }]
+  CustomerId;
+
+  @UI.lineItem: [{ position: 40 }]
+  @UI.selectionField: [{ position: 40 }]
+  @UI.fieldGroup: [{ 
+                        qualifier: 'QLF_Dates',
+                        label: 'Start Date',
+                        position: 10 
+                  }]
+  BeginDate;
+
+  @UI.lineItem: [{ position: 50 }]
+  @UI.selectionField: [{ position: 50 }]
+  @UI.fieldGroup: [{ 
+                        qualifier: 'QLF_Dates',
+                        label: 'End Date',
+                        position: 20 
+                  }]
+  EndDate;
+
+  @UI.lineItem: [{ position: 60 }]
+  @UI.selectionField: [{ position: 60 }]
+  @UI.fieldGroup: [{ 
+                        qualifier: 'QLF_Pricing',
+                        label: 'Booking Fee',
+                        position: 10 
+                  }]
+  BookingFee;
+
+  @UI.lineItem: [{ position: 70 }]
+  @UI.dataPoint: { 
+                    qualifier: 'QLF_price_data',
+                    title: 'Flight Price' 
+                 }
+  @UI.fieldGroup: [{ 
+                        qualifier: 'QLF_Pricing',
+                        label: 'Total Price',
+                        position: 20 
+                  }]
+  TotalPrice;
+
+  @UI.lineItem: [{ position: 80 }]
+  @UI.fieldGroup: [{ 
+                        qualifier: 'QLF_Pricing',
+                        label: 'Currency Code',
+                        position: 30 
+                  }]
+  @Consumption.valueHelpDefinition: [{ 
+                                        entity : { 
+                                                    name: 'I_Currency',
+                                                    element:'Currency'
+                                                 } 
+                                    }]
+  CurrencyCode;
+
+  @UI.lineItem: [{ position: 90 }]
+  Description;
+
+  @UI.lineItem: [ { 
+                    position: 100,
+                    criticality: 'OverallStatusCriticality',
+                    importance: #HIGH 
+                } ]
+  @UI.selectionField: [{ position: 100 }]
+  @UI.dataPoint: { 
+                    qualifier: 'QLF_status',
+                    title: 'Travel Status',
+                    criticality: 'OverallStatusCriticality' 
+                 }
+  @UI.fieldGroup: [{ 
+                        qualifier: 'QLF_Dates',
+                        label: 'Status',
+                        position: 30 
+                  }]
+  @Consumption.valueHelpDefinition: [{ 
+                                        entity : { 
+                                                    name: '/DMO/I_Overall_Status_VH_Text',
+                                                    element:'OverallStatus'
+                                                 } 
+                                    }]
+  OverallStatus;
+
+  @UI.hidden: true
+  CreatedBy;
+
+  @UI.hidden: true
+  CreatedAt;
+
+  @UI.hidden: true
+  LastChangedBy;
+
+  @UI.hidden: true
+  LastChangedAt;
+}
