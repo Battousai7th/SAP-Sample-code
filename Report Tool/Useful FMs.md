@@ -175,3 +175,6 @@ CALL FUNCTION 'NUMBER_GET_NEXT'
   IMPORTING
     NUMBER      = LS_LOGHIS-ZNUMBER.              " free number ![image](https://github.com/user-attachments/assets/dc2013b0-8222-4664-a881-a277080cc0ee)
 ```
+
+- **FM Lấy thuế GTGT tcode (FTXP)**
+`GET_TAX_PERCENTAGE`
