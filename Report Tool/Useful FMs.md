@@ -166,3 +166,12 @@ DATA: AMOUNT_R Types BAPICURR_D	(DEC  23  4),
 `RKD_WORD_WRAP`
 ![image](https://github.com/user-attachments/assets/bfd84a85-6a1d-4e1f-8dda-a680a75e1400)
 
+- **FM lấy STT tự động**
+```abap
+CALL FUNCTION 'NUMBER_GET_NEXT'
+  EXPORTING
+    NR_RANGE_NR = '01'               " Number range number
+    OBJECT      = 'ZEDOC_LOGH'              " Name of number range object
+  IMPORTING
+    NUMBER      = LS_LOGHIS-ZNUMBER.              " free number ![image](https://github.com/user-attachments/assets/dc2013b0-8222-4664-a881-a277080cc0ee)
+```
